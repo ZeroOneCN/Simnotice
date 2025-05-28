@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1890ff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="description"
+      content="SIM卡管理与提醒系统"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>手机号卡管理提醒</title>
+    <style>
+      /* 预加载两种主题颜色，确保立即切换不闪烁 */
+      :root {
+        --bg-color: #f0f2f5;
+        --content-bg: #fff;
+        --header-bg: #fff;
+        --text-color: #000;
+        --border-color: #f0f0f0;
+        --shadow-color: rgba(0, 0, 0, 0.06);
+        --hover-color: #f0f7ff;
+        --stripe-color: #fafafa;
+      }
+      
+      [data-theme="dark"] {
+        --bg-color: #121212;
+        --content-bg: #1f1f1f;
+        --header-bg: #141414;
+        --text-color: #fff;
+        --border-color: #303030;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+        --hover-color: #111b26;
+        --stripe-color: #1a1a1a;
+      }
+      
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+      }
+
+      /* 去除主题切换闪烁 */
+      html {
+        visibility: visible;
+        opacity: 1;
+      }
+    </style>
+    <script>
+      // 在页面加载前设置主题，防止闪烁
+      (function() {
+        var theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', theme === 'dark' ? '#141414' : '#1890ff');
+      })();
+    </script>
+  </head>
+  <body>
+    <noscript>您需要启用JavaScript才能运行此应用。</noscript>
+    <div id="root"></div>
+  </body>
+</html> 

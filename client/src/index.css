@@ -1,0 +1,191 @@
+/* 全局样式和颜色预设 */
+:root {
+  --bg-color: #f0f2f5;
+  --content-bg: #fff;
+  --header-bg: #fff;
+  --text-color: #000;
+  --border-color: #f0f0f0;
+  --shadow-color: rgba(0, 0, 0, 0.06);
+  --hover-color: #f0f7ff;
+  --stripe-color: #fafafa;
+}
+
+[data-theme="dark"] {
+  --bg-color: #121212;
+  --content-bg: #1f1f1f;
+  --header-bg: #141414;
+  --text-color: #fff;
+  --border-color: #303030;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --hover-color: #111b26;
+  --stripe-color: #1a1a1a;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  /* 隐藏滚动条但保持可滚动 */
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+/* 隐藏所有元素的滚动条 */
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* 平滑过渡 - 关键元素立即变色 */
+.ant-layout {
+  background-color: var(--bg-color) !important;
+}
+
+.ant-layout-header {
+  background-color: var(--header-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.site-layout-content {
+  background-color: var(--content-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.site-layout-content {
+  min-height: 280px;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.logo {
+  float: left;
+  margin-right: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-color) !important;
+  display: flex;
+  align-items: center;
+}
+
+.header-menu {
+  line-height: 64px;
+}
+
+.container {
+  padding: 0 50px;
+}
+
+.table-operations {
+  margin-bottom: 16px;
+}
+
+.table-operations > button {
+  margin-right: 8px;
+}
+
+/* 表格标题和内容水平居中 */
+.ant-table-thead > tr > th {
+  text-align: center !important;
+  background-color: var(--content-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+.ant-table-tbody > tr > td {
+  text-align: center !important;
+  background-color: var(--content-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* 表格斑马纹样式 */
+.table-row-striped {
+  background-color: var(--stripe-color) !important;
+}
+
+/* 添加鼠标悬停效果 */
+.ant-table-tbody > tr:hover > td {
+  background-color: var(--hover-color) !important;
+}
+
+/* 添加圆角样式 */
+.ant-card, 
+.ant-input, 
+.ant-btn,
+.ant-input-number,
+.ant-select-selector,
+.ant-table,
+.ant-table-container,
+.ant-modal-content,
+.ant-modal-header,
+.ant-picker,
+.ant-tag {
+  border-radius: 8px !important;
+}
+
+.ant-table-title {
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+}
+
+.ant-table-tbody > tr:last-child > td:first-child {
+  border-bottom-left-radius: 8px !important;
+}
+
+.ant-table-tbody > tr:last-child > td:last-child {
+  border-bottom-right-radius: 8px !important;
+}
+
+/* 固定导航栏样式 */
+.ant-layout-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+/* 暗黑模式全局样式 */
+[data-theme="dark"] .ant-menu {
+  background-color: var(--header-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .ant-menu-item a {
+  color: var(--text-color) !important;
+}
+
+[data-theme="dark"] .ant-card {
+  background-color: var(--content-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* 立即生效的过渡策略 */
+html.transitions-prepare {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 10px;
+  }
+} 
