@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 
 // 加载环境变量
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 async function initDatabase() {
   let connection;
@@ -178,4 +178,8 @@ async function initDatabase() {
 }
 
 // 执行初始化
-initDatabase(); 
+if (require.main === module) {
+  initDatabase();
+}
+
+module.exports = { initDatabase };

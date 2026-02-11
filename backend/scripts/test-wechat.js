@@ -9,7 +9,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 
 // 加载环境变量
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // 从命令行参数获取webhook地址
 const webhookUrl = process.argv[2];

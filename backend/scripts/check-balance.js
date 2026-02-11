@@ -11,7 +11,7 @@ const { sendBalanceLowNotification, sendWeChatNotification } = require('../confi
 const { testConnection } = require('../config/db');
 
 // 加载环境变量
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 async function checkBalance() {
   try {
@@ -19,7 +19,7 @@ async function checkBalance() {
     const dbConnected = await testConnection();
     if (!dbConnected) {
       console.error('数据库连接失败，无法执行余额检查');
-      process.exit(1);
+      throw new Error('数据库连接失败，无法执行余额检查');
     }
 
     // 获取设置
@@ -42,7 +42,7 @@ async function checkBalance() {
 
     if (!emailEnabled && !wechatEnabled) {
       console.log('所有通知方式均已禁用，跳过余额检查');
-      process.exit(0);
+      return { skipped: true, reason: 'notifications_disabled' };
     }
 
     // 获取余额低的SIM卡
@@ -51,7 +51,7 @@ async function checkBalance() {
 
     if (lowBalanceSims.length === 0) {
       console.log('没有余额不足的SIM卡');
-      process.exit(0);
+      return { skipped: true, reason: 'no_low_balance' };
     }
 
     console.log(`找到 ${lowBalanceSims.length} 张余额不足的SIM卡`);
@@ -107,12 +107,19 @@ async function checkBalance() {
     }
 
     console.log('余额检查完成');
-    process.exit(0);
+    return { success: true, count: lowBalanceSims.length };
   } catch (error) {
     console.error('余额检查失败:', error.message);
-    process.exit(1);
+    throw error;
   }
 }
 
-// 执行检查
-checkBalance();
+// 导出函数供其他模块调用
+module.exports = { checkBalance };
+
+// 如果是直接执行此文件，则执行检查
+if (require.main === module) {
+  checkBalance()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));
+}

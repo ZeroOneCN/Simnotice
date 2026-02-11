@@ -1,22 +1,25 @@
 {
-  "name": "simnotice-client",
+  "name": "simnotice",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "antd": "^5.8.2",
+    "axios": "^1.4.0",
+    "baseline-browser-mapping": "^2.9.19",
+    "caniuse-lite": "^1.0.30001769",
+    "dayjs": "^1.11.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "axios": "^1.4.0",
     "react-router-dom": "^6.14.2",
-    "antd": "^5.8.2",
-    "dayjs": "^1.11.9",
+    "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "dev": "react-scripts start",
+    "start": "npm run dev",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -39,5 +42,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:5000"
-} 
+  "proxy": "http://localhost:9501",
+  "devDependencies": {
+    "@craco/craco": "^7.1.0"
+  }
+}

@@ -4,7 +4,7 @@ const path = require('path');
 const axios = require('axios');
 
 // 加载环境变量
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // 创建邮件传输器
 const transporter = nodemailer.createTransport({

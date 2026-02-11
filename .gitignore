@@ -1,54 +1,56 @@
-# 依赖
 node_modules/
-package-lock.json
-yarn.lock
-
-# 环境变量和敏感信息
-.env
-.env.local
-.env.development
-.env.test
-.env.production
-*.pem
-*.key
-*.cert
-
-# 日志
-logs
-*.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
-
-# 构建输出
-/dist
-/build
-/out
-/client/build
-
-# 编辑器和IDE文件
-.idea/
-.vscode/
-*.sublime-project
-*.sublime-workspace
+yarn.lock
+package-lock.json
+.env
 .DS_Store
-Thumbs.db
+*.class
+*.jar
+*.war
+*.ear
+target/
+.gradle/
+build/
+# 忽略 uploads/images 目录下的所有文件
+uploads/images/*
+!uploads/images/.gitkeep
+# VS Code
+.vscode/
+*.code-workspace
 
-# 临时文件
-.tmp/
-.temp/
-.cache/
-*.swp
-*.swo
+# IntelliJ
+.idea/
+*.iml
+*.iws
 
-# 测试覆盖率报告
-coverage/
+# Eclipse
+.settings/
+.project
+.classpath
+# 忽略所有 .log 文件
+*.log
 
-# 数据库相关
-*.sqlite
-*.sqlite3
-*.db
+# 忽略特定文件
+secret.key
+config.local.json
 
-# 备份文件
-*.bak
-*.backup
+# 忽略整个目录
+node_modules/
+dist/
+build/
+*.dSYM/
+
+# 但保留目录中的 .gitkeep 文件
+!node_modules/.gitkeep
+
+# 忽略所有 .tmp 文件，但 logs/ 目录下的除外
+*.tmp
+!logs/*.tmp
+
+# 忽略特定扩展名
+*.zip
+*.tar.gz
+
+# 忽略特定路径的文件
+debug/error.log

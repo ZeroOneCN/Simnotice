@@ -13,6 +13,12 @@
 - 完整交易记录跟踪（自动扣费和手动充值）
 - 自定义通知设置和模板
 
+## 项目预览
+
+![首页页面](images/1-首页页面.png "首页页面")
+![手动充值记录页面](images/2-手动充值记录页面.png "手动充值记录页面")
+![系统通知设置页面](images/3-系统通知设置页面.png "系统通知设置页面")
+
 ## 技术栈
 
 - 前端：React.js + Ant Design
@@ -32,49 +38,49 @@
 
 1. 克隆项目
 2. 安装依赖
-   ```
-   npm run install-all
+   ```bash
+   cd backend
+   npm install
+   cd ../frontend
+   npm install
    ```
 3. 配置环境变量
-   - 方法一：运行环境变量设置脚本
-     ```
-     npm run setup-env
-     ```
-     然后编辑生成的`.env`文件，填写您的配置信息。
+   在 backend 目录创建`.env`文件，参考以下配置:
+   ```
+   # 数据库配置
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=your_password
+   DB_NAME=simnotice_db
+   DB_PORT=3306
    
-   - 方法二：手动创建一个`.env`文件在项目根目录，参考以下配置:
-     ```
-     # 数据库配置
-     DB_HOST=localhost
-     DB_USER=root
-     DB_PASSWORD=your_password
-     DB_NAME=simnotice_db
-     DB_PORT=3306
-     
-     # 服务器配置
-     PORT=5000
-     
-     # 邮件配置（阿里云邮箱）
-     EMAIL_HOST=smtp.mxhichina.com
-     EMAIL_PORT=465
-     EMAIL_USER=your_email@aliyun.com
-     EMAIL_PASS=your_email_password
-     EMAIL_FROM=your_email@aliyun.com
-     
-     # 接收通知的邮箱
-     RECIPIENT_EMAIL=your_email@example.com
-     
-     # 通知配置
-     BALANCE_THRESHOLD=10  # 余额低于此值时发送提醒（单位：元）
-     ```
-
-4. 初始化数据库
-   ```
-   node server/db/init-db.js
+   # 服务器配置
+   PORT=9501
+   
+   # 邮件配置
+   EMAIL_HOST=smtp.your-email-provider.com
+   EMAIL_PORT=465
+   EMAIL_USER=your_email@example.com
+   EMAIL_PASS=your_email_password
+   EMAIL_FROM=your_email@example.com
+   
+   # 接收通知的邮箱
+   RECIPIENT_EMAIL=your_email@example.com
+   
+   # 通知配置
+   BALANCE_THRESHOLD=10  # 余额低于此值时发送提醒（单位：元）
    ```
 
-5. 启动应用
+4. 启动应用（自动初始化数据库）
+   ```bash
+   cd backend
+   npm run dev
    ```
+   系统会自动检测并初始化数据库。
+   
+   新开终端启动前端:
+   ```bash
+   cd frontend
    npm run dev
    ```
 
@@ -101,35 +107,25 @@
 
 所有余额变动都会被记录到交易历史中，方便后续查询和审计。
 
-## 自动检查余额
+## 定时任务功能
 
-您可以使用以下命令手动运行余额检查:
+系统已集成定时任务服务，在后端执行 `npm run dev` 启动时自动安排以下任务：
 
-```
-npm run check-balance
-```
+### 自动余额检查
+- **时间**: 每天上午 8:00 (北京时间)
+- **功能**: 检查所有SIM卡余额，低于阈值时发送通知
 
-或者将其设置为定时任务，例如使用crontab在Linux上每天执行一次:
+### 自动扣费功能  
+- **时间**: 每天凌晨 1:00 (北京时间)
+- **功能**: 检查当天到月结日的SIM卡，自动扣除月租费
 
-```
-0 8 * * * cd /path/to/simnotice && npm run check-balance
-```
-
-## 自动扣费功能
-
-系统会在每个SIM卡的月结日自动扣除月租费。您可以使用以下命令手动运行自动扣费脚本:
-
-```
-npm run auto-billing
+### 手动执行命令（测试用途）
+```bash
+npm run check-balance    # 手动执行余额检查
+npm run auto-billing     # 手动执行自动扣费
 ```
 
-建议将此脚本设置为每天执行一次的定时任务:
-
-```
-0 1 * * * cd /path/to/simnotice && npm run auto-billing
-```
-
-自动扣费流程：
+### 自动扣费流程
 1. 系统检查当天是否有SIM卡的月结日
 2. 对于月结日的SIM卡，系统会自动从余额中扣除月租费
 3. 如果余额不足，系统会发送通知但不会扣费

@@ -1,0 +1,25 @@
+{
+  "name": "simnotice-server",
+  "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "npm run dev",
+    "check-balance": "node scripts/check-balance.js",
+    "auto-billing": "node scripts/auto-billing.js",
+    "test-wechat": "node scripts/test-wechat.js"
+  },
+  "dependencies": {
+    "axios": "^1.9.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mysql2": "^3.6.0",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^6.9.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

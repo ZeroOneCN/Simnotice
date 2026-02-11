@@ -12,7 +12,7 @@ const { testConnection } = require('../config/db');
 const { sendBalanceLowNotification, sendWeChatNotification } = require('../config/mailer');
 
 // 加载环境变量
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 async function autoBilling() {
   try {
@@ -20,7 +20,7 @@ async function autoBilling() {
     const dbConnected = await testConnection();
     if (!dbConnected) {
       console.error('数据库连接失败，无法执行自动扣费');
-      process.exit(1);
+      throw new Error('数据库连接失败，无法执行自动扣费');
     }
 
     console.log('开始执行自动扣费任务...');
@@ -30,7 +30,7 @@ async function autoBilling() {
     
     if (cardsForBilling.length === 0) {
       console.log('今天没有需要扣费的SIM卡');
-      process.exit(0);
+      return { skipped: true, reason: 'no_cards_for_billing' };
     }
     
     console.log(`找到 ${cardsForBilling.length} 张需要扣费的SIM卡`);
@@ -178,12 +178,19 @@ async function autoBilling() {
     console.log(`- 余额不足: ${deductionResults.notEnoughBalance} 张卡`);
     console.log(`- 失败: ${deductionResults.failed} 张卡`);
     
-    process.exit(0);
+    return { success: true, stats: deductionResults };
   } catch (error) {
     console.error('自动扣费任务失败:', error.message);
-    process.exit(1);
+    throw error;
   }
 }
 
-// 执行自动扣费
-autoBilling(); 
+// 导出函数供其他模块调用
+module.exports = { autoBilling };
+
+// 如果是直接执行此文件，则执行自动扣费
+if (require.main === module) {
+  autoBilling()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));
+}
