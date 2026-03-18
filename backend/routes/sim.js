@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const SimCard = require('../models/SimCard');
 const Carrier = require('../models/Carrier');
-const { pool } = require('../config/db');
+const { query } = require('../config/db');
 
 // 获取所有SIM卡
 router.get('/', async (req, res) => {
@@ -57,7 +57,7 @@ router.patch('/:id/balance', async (req, res) => {
     if (balance === undefined) {
       return res.status(400).json({ message: '余额不能为空' });
     }
-    
+
     const updated = await SimCard.updateBalance(req.params.id, balance);
     if (!updated) {
       return res.status(404).json({ message: '未找到SIM卡' });
@@ -103,8 +103,8 @@ router.post('/:id/recharge', async (req, res) => {
       new_balance: newBalance
     });
 
-    res.json({ 
-      message: '充值成功', 
+    res.json({
+      message: '充值成功',
       sim_id: simCard.id,
       phone_number: simCard.phone_number,
       previous_balance: previousBalance,
@@ -126,9 +126,9 @@ router.get('/:id/transactions', async (req, res) => {
     }
 
     // 查询交易记录
-    const [rows] = await pool.query(`
-      SELECT * FROM transactions 
-      WHERE sim_id = ? 
+    const rows = await query(`
+      SELECT * FROM transactions
+      WHERE sim_id = ?
       ORDER BY created_at DESC
     `, [req.params.id]);
 
@@ -168,7 +168,7 @@ router.post('/carriers', async (req, res) => {
     if (!name) {
       return res.status(400).json({ message: '运营商名称不能为空' });
     }
-    
+
     const carrier = await Carrier.create(name);
     res.status(201).json(carrier);
   } catch (error) {
@@ -183,7 +183,7 @@ router.put('/carriers/:id', async (req, res) => {
     if (!name) {
       return res.status(400).json({ message: '运营商名称不能为空' });
     }
-    
+
     const updated = await Carrier.update(req.params.id, name);
     if (!updated) {
       return res.status(404).json({ message: '未找到运营商' });
@@ -207,4 +207,4 @@ router.delete('/carriers/:id', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

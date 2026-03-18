@@ -1,17 +1,16 @@
-const { pool } = require('../config/db');
+const { query, execute } = require('../config/db');
 
 class SimCard {
   /**
    * 获取所有SIM卡
-   * @returns {Promise<Array>} - SIM卡列表
    */
   static async getAll() {
     try {
-      const [rows] = await pool.query(`
-        SELECT * FROM sim_cards 
-        ORDER BY 
-          CASE WHEN activation_date IS NULL THEN 1 ELSE 0 END, 
-          activation_date ASC, 
+      const rows = await query(`
+        SELECT * FROM sim_cards
+        ORDER BY
+          CASE WHEN activation_date IS NULL THEN 1 ELSE 0 END,
+          activation_date ASC,
           id DESC
       `);
       return rows;
@@ -23,14 +22,10 @@ class SimCard {
 
   /**
    * 获取单个SIM卡
-   * @param {number} id - SIM卡ID
-   * @returns {Promise<Object>} - SIM卡信息
    */
   static async getById(id) {
     try {
-      const [rows] = await pool.query(`
-        SELECT * FROM sim_cards WHERE id = ?
-      `, [id]);
+      const rows = await query(`SELECT * FROM sim_cards WHERE id = ?`, [id]);
       return rows[0];
     } catch (error) {
       console.error(`获取ID为${id}的SIM卡失败:`, error.message);
@@ -40,23 +35,21 @@ class SimCard {
 
   /**
    * 创建SIM卡
-   * @param {Object} simData - SIM卡数据
-   * @returns {Promise<Object>} - 创建结果
    */
   static async create(simData) {
     try {
-      const { 
-        phone_number, balance, carrier, monthly_fee, billing_day, 
-        data_plan, call_minutes, sms_count, location, activation_date 
+      const {
+        phone_number, balance, carrier, monthly_fee, billing_day,
+        data_plan, call_minutes, sms_count, location, activation_date
       } = simData;
 
-      const [result] = await pool.query(`
-        INSERT INTO sim_cards 
+      const result = await execute(`
+        INSERT INTO sim_cards
         (phone_number, balance, carrier, monthly_fee, billing_day, data_plan, call_minutes, sms_count, location, activation_date)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [
-        phone_number, balance, carrier, monthly_fee, billing_day, 
-        data_plan, call_minutes, sms_count, location, activation_date
+        phone_number, balance, carrier, monthly_fee, billing_day,
+        data_plan || null, call_minutes || null, sms_count || null, location || null, activation_date || null
       ]);
 
       return { id: result.insertId, ...simData };
@@ -68,25 +61,23 @@ class SimCard {
 
   /**
    * 更新SIM卡
-   * @param {number} id - SIM卡ID
-   * @param {Object} simData - 更新数据
-   * @returns {Promise<boolean>} - 更新结果
    */
   static async update(id, simData) {
     try {
-      const { 
-        phone_number, balance, carrier, monthly_fee, billing_day, 
-        data_plan, call_minutes, sms_count, location, activation_date 
+      const {
+        phone_number, balance, carrier, monthly_fee, billing_day,
+        data_plan, call_minutes, sms_count, location, activation_date
       } = simData;
 
-      const [result] = await pool.query(`
-        UPDATE sim_cards 
+      const result = await execute(`
+        UPDATE sim_cards
         SET phone_number = ?, balance = ?, carrier = ?, monthly_fee = ?, billing_day = ?,
-            data_plan = ?, call_minutes = ?, sms_count = ?, location = ?, activation_date = ?
+            data_plan = ?, call_minutes = ?, sms_count = ?, location = ?, activation_date = ?,
+            updated_at = datetime('now', 'localtime')
         WHERE id = ?
       `, [
-        phone_number, balance, carrier, monthly_fee, billing_day, 
-        data_plan, call_minutes, sms_count, location, activation_date, id
+        phone_number, balance, carrier, monthly_fee, billing_day,
+        data_plan || null, call_minutes || null, sms_count || null, location || null, activation_date || null, id
       ]);
 
       return result.affectedRows > 0;
@@ -98,14 +89,11 @@ class SimCard {
 
   /**
    * 更新余额
-   * @param {number} id - SIM卡ID
-   * @param {number} balance - 新余额
-   * @returns {Promise<boolean>} - 更新结果
    */
   static async updateBalance(id, balance) {
     try {
-      const [result] = await pool.query(`
-        UPDATE sim_cards SET balance = ? WHERE id = ?
+      const result = await execute(`
+        UPDATE sim_cards SET balance = ?, updated_at = datetime('now', 'localtime') WHERE id = ?
       `, [balance, id]);
 
       return result.affectedRows > 0;
@@ -117,15 +105,10 @@ class SimCard {
 
   /**
    * 删除SIM卡
-   * @param {number} id - SIM卡ID
-   * @returns {Promise<boolean>} - 删除结果
    */
   static async delete(id) {
     try {
-      const [result] = await pool.query(`
-        DELETE FROM sim_cards WHERE id = ?
-      `, [id]);
-
+      const result = await execute(`DELETE FROM sim_cards WHERE id = ?`, [id]);
       return result.affectedRows > 0;
     } catch (error) {
       console.error(`删除ID为${id}的SIM卡失败:`, error.message);
@@ -135,13 +118,11 @@ class SimCard {
 
   /**
    * 获取余额低于阈值的SIM卡
-   * @param {number} threshold - 阈值
-   * @returns {Promise<Array>} - SIM卡列表
    */
   static async getLowBalance(threshold) {
     try {
-      const [rows] = await pool.query(`
-        SELECT * FROM sim_cards 
+      const rows = await query(`
+        SELECT * FROM sim_cards
         WHERE balance < monthly_fee OR balance < ?
         ORDER BY balance ASC
       `, [threshold]);
@@ -153,14 +134,13 @@ class SimCard {
   }
 
   /**
-   * 获取当天需要扣费的SIM卡（今天是月结日的卡）
-   * @returns {Promise<Array>} - SIM卡列表
+   * 获取当天需要扣费的SIM卡
    */
   static async getCardsForBilling() {
     try {
-      const [rows] = await pool.query(`
-        SELECT * FROM sim_cards 
-        WHERE billing_day = DAY(CURDATE())
+      const rows = await query(`
+        SELECT * FROM sim_cards
+        WHERE billing_day = CAST(strftime('%d', 'now', 'localtime') AS INTEGER)
         ORDER BY carrier, phone_number
       `);
       return rows;
@@ -172,19 +152,13 @@ class SimCard {
 
   /**
    * 自动扣除月租费
-   * @param {number} id - SIM卡ID
-   * @param {number} monthlyFee - 月租费用
-   * @param {number} currentBalance - 当前余额
-   * @returns {Promise<{success: boolean, newBalance: number, error: string|null}>} - 扣费结果
    */
   static async deductMonthlyFee(id, monthlyFee, currentBalance) {
     try {
-      // 计算扣除月租后的余额
       const newBalance = parseFloat((currentBalance - monthlyFee).toFixed(2));
-      
-      // 更新余额
-      const [result] = await pool.query(`
-        UPDATE sim_cards SET balance = ? WHERE id = ?
+
+      const result = await execute(`
+        UPDATE sim_cards SET balance = ?, updated_at = datetime('now', 'localtime') WHERE id = ?
       `, [newBalance, id]);
 
       if (result.affectedRows > 0) {
@@ -200,38 +174,20 @@ class SimCard {
 
   /**
    * 记录交易历史
-   * @param {Object} transactionData - 交易数据
-   * @returns {Promise<Object>} - 创建结果
    */
   static async recordTransaction(transactionData) {
     try {
-      const { 
-        sim_id, phone_number, amount, type, description, 
+      const {
+        sim_id, phone_number, amount, type, description,
         previous_balance, new_balance
       } = transactionData;
 
-      // 检查交易记录表是否存在，不存在则创建
-      await pool.query(`
-        CREATE TABLE IF NOT EXISTS transactions (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          sim_id INT NOT NULL,
-          phone_number VARCHAR(20) NOT NULL,
-          amount DECIMAL(10,2) NOT NULL,
-          type ENUM('deduct', 'add') NOT NULL,
-          description TEXT,
-          previous_balance DECIMAL(10,2) NOT NULL,
-          new_balance DECIMAL(10,2) NOT NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          FOREIGN KEY (sim_id) REFERENCES sim_cards(id) ON DELETE CASCADE
-        )
-      `);
-
-      const [result] = await pool.query(`
-        INSERT INTO transactions 
+      const result = await execute(`
+        INSERT INTO transactions
         (sim_id, phone_number, amount, type, description, previous_balance, new_balance)
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `, [
-        sim_id, phone_number, amount, type, description, 
+        sim_id, phone_number, amount, type, description || null,
         previous_balance, new_balance
       ]);
 
@@ -243,4 +199,4 @@ class SimCard {
   }
 }
 
-module.exports = SimCard; 
+module.exports = SimCard;

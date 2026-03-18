@@ -22,15 +22,15 @@ app.use('/api/settings', require('./routes/settings'));
 
 // 生产环境下的静态文件服务
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../', 'frontend', 'build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, '../', 'frontend', 'dist', 'index.html'));
   });
 }
 
 // 环境变量
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 9501;
 
 // 启动服务器并初始化数据库
 async function startServer() {
@@ -40,43 +40,21 @@ async function startServer() {
     if (!dbConnected) {
       console.log('数据库连接失败，尝试初始化数据库...');
       // 执行数据库初始化
-      const { initDatabase } = require('./db/init-db');
+      const { initDatabase } = require('./scripts/init-db');
       await initDatabase();
       console.log('数据库初始化完成');
-      
-      // 重新测试连接
-      const reconnected = await testConnection();
-      if (!reconnected) {
-        console.error('数据库初始化后仍然无法连接');
-        process.exit(1);
-      }
     }
-    
+
     // 启动定时任务服务
     scheduler.init();
-    
+
     app.listen(PORT, '0.0.0.0', () => {
-      const localIP = getLocalIP();
       console.log(`\n服务器运行在端口 ${PORT}`);
     });
   } catch (error) {
     console.error('服务器启动失败:', error);
     process.exit(1);
   }
-}
-
-// 获取本地IP地址
-function getLocalIP() {
-  const interfaces = require('os').networkInterfaces();
-  for (const interfaceName in interfaces) {
-    const addresses = interfaces[interfaceName];
-    for (const address of addresses) {
-      if (address.family === 'IPv4' && !address.internal) {
-        return address.address;
-      }
-    }
-  }
-  return 'localhost';
 }
 
 // 启动服务器
