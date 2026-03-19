@@ -54,3 +54,14 @@ build/
 
 # 忽略特定路径的文件
 debug/error.log
+# 数据库文件
+*.db
+*.db3
+*.sqlite
+*.sqlite3
+# SQL脚本（可选，视情况而定）
+# *.sql
+# 其他敏感文件
+*.env
+*.bak
+*.backup
