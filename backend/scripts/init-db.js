@@ -67,6 +67,25 @@ async function initDatabase() {
     `);
     console.log('交易记录表创建成功');
 
+    // 创建账单记录表
+    db.run(`
+      CREATE TABLE IF NOT EXISTS bill_records (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sim_id INTEGER NOT NULL,
+        phone_number TEXT NOT NULL,
+        billing_month TEXT NOT NULL,
+        monthly_fee REAL DEFAULT 0.00,
+        actual_fee REAL DEFAULT 0.00,
+        extra_charges REAL DEFAULT 0.00,
+        total_fee REAL DEFAULT 0.00,
+        note TEXT,
+        created_at TEXT DEFAULT (datetime('now', 'localtime')),
+        updated_at TEXT DEFAULT (datetime('now', 'localtime')),
+        UNIQUE(sim_id, billing_month)
+      )
+    `);
+    console.log('账单记录表创建成功');
+
     // 插入默认数据
     console.log('正在插入默认数据...');
 

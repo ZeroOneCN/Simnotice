@@ -19,6 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 // 路由
 app.use('/api/sim', require('./routes/sim'));
 app.use('/api/settings', require('./routes/settings'));
+app.use('/api/bills', require('./routes/bills'));
 
 // 生产环境下的静态文件服务
 if (process.env.NODE_ENV === 'production') {

@@ -1,10 +1,12 @@
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { CreditCard, Settings, Menu, X, Smartphone } from 'lucide-react';
+import { CreditCard, Settings, Menu, X, Smartphone, BarChart3, FileText } from 'lucide-react';
 import { useState } from 'react';
 
 import SimCardList from '@/pages/SimCardList';
 import SimCardForm from '@/pages/SimCardForm';
 import SettingsPage from '@/pages/Settings';
+import Statistics from '@/pages/Statistics';
+import BillManagement from '@/pages/BillManagement';
 
 function AppLayout() {
   const location = useLocation();
@@ -12,6 +14,8 @@ function AppLayout() {
 
   const navLinks = [
     { to: '/', label: '号卡管理', icon: Smartphone },
+    { to: '/statistics', label: '扣费统计', icon: BarChart3 },
+    { to: '/bills', label: '账单管理', icon: FileText },
     { to: '/settings', label: '系统设置', icon: Settings },
   ];
 
@@ -23,7 +27,7 @@ function AppLayout() {
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <CreditCard className="h-6 w-6 mr-2 text-primary" />
-            <span className="font-semibold text-lg">SIM卡管理系统</span>
+            <span className="font-semibold text-lg">SIM 卡管理系统</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -83,6 +87,8 @@ function AppLayout() {
           <Route path="/" element={<SimCardList />} />
           <Route path="/sim/add" element={<SimCardForm id={null} carriers={[]} onSuccess={() => {}} onCancel={() => {}} />} />
           <Route path="/sim/edit/:id" element={<SimCardForm id={null} carriers={[]} onSuccess={() => {}} onCancel={() => {}} />} />
+          <Route path="/statistics" element={<Statistics />} />
+          <Route path="/bills" element={<BillManagement />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </main>
@@ -90,7 +96,7 @@ function AppLayout() {
       {/* Footer */}
       <footer className="border-t py-4 mt-auto">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          SIM卡管理系统 © {new Date().getFullYear()}
+          SIM 卡管理系统 © {new Date().getFullYear()}
         </div>
       </footer>
     </div>

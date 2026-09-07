@@ -36,4 +36,11 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+  /* 图表阴影问题修复 */
+  .recharts-wrapper {
+    overflow: visible !important;
+  }
+  .recharts-tooltip-wrapper {
+    overflow: visible !important;
+  }
 }
